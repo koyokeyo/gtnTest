@@ -70,7 +70,8 @@ public class AddPersonPage {
         taxNumberSearchInput.shouldBe(Condition.interactable, Duration.ofSeconds(40)).clear();
         taxNumberSearchInput.sendKeys(taxNumber);
         searchButton.shouldBe(Condition.interactable, Duration.ofSeconds(40)).click();
-        return Selenide.$(personFoundByTaxNumber).exists();
+        return Selenide.$(personFoundByTaxNumber).shouldBe(Condition.visible,Condition.enabled, Condition.interactable)
+                .exists();
 
     }
     @Step("Завершение создания физического лица.")
