@@ -5,51 +5,49 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 
 public class AddPersonPage {
-    private SelenideElement operationFromLeftNavBar = $x("//a[@title='Операции']");
-    private SelenideElement addPersonButton = $x("//a[contains(@class, 'add')]");
-    private SelenideElement personsLi = $x("//a[contains(@href, 'ersons')]");
-    private SelenideElement popupAddPerson  = $x("//a[@title='Физ. лицо']");
+    private final SelenideElement operationFromLeftNavBar = $x("//a[@title='Операции']");
+    private final SelenideElement addPersonButton = $x("//a[contains(@class, 'add')]");
+    private final SelenideElement personsLi = $x("//a[contains(@href, 'ersons')]");
+    private final SelenideElement popupAddPerson  = $x("//a[@title='Физ. лицо']");
 
-    private SelenideElement lastNameFormInput = $x("//input[@class='form-control" +
+    private final SelenideElement lastNameFormInput = $x("//input[@class='form-control" +
        " mandatory-field-color-useroption169 ng-empty'][1]");
-    private SelenideElement firstNameFormInput = $x("//input[@class='form-control" +
+    private final SelenideElement firstNameFormInput = $x("//input[@class='form-control" +
       " mandatory-field-color-useroption169 ng-empty'][1]");
-    private SelenideElement taxNumberInput = $x("//input[@ng-model='person.Inn']");
-    private SelenideElement sexInputUl = $x("//div[@ng-click='selectClick()'][.//option[@label='М']]");
-    private SelenideElement sexSelect = $x("//select[.//option[@label='М']]");
-    private SelenideElement birthDateInput = $x("//input[@ng-blur='checkPerson()']");
-    private SelenideElement citizenshipDropDown = $x("//select[.//option[@value='string:88']]");
-    private SelenideElement citizenshipDiv = $x("//div[contains(@class, 'input-group')]" +
+    private final SelenideElement taxNumberInput = $x("//input[@ng-model='person.Inn']");
+    private final SelenideElement sexInputUl = $x("//div[@ng-click='selectClick()'][.//option[@label='М']]");
+    private final SelenideElement sexSelect = $x("//select[.//option[@label='М']]");
+    private final SelenideElement birthDateInput = $x("//input[@ng-blur='checkPerson()']");
+    private final SelenideElement citizenshipDropDown = $x("//select[.//option[@value='string:88']]");
+    private final SelenideElement citizenshipDiv = $x("//div[contains(@class, 'input-group')]" +
        "[.//option[@value='string:88']]");
-    private SelenideElement birthAddressButton = $x(
+    private final SelenideElement birthAddressButton = $x(
        "/html/body/div[1]/div/div/div[2]/div/div/div[1]" +
                "/div[1]/div/div[6]/div[2]/address-control/div/div/button[1]");
 
-    private SelenideElement birthAddressTextArea = $x("//textarea[@ng-model='address']");
-    private SelenideElement birthAddressTextAreaSubmitButton = $x("//button[@class='btn btn-green']");
-    private SelenideElement livingAddressButton = $x("/html/body/div[1]/div/div/div[2]/div/div/" +
+    private final SelenideElement birthAddressTextArea = $x("//textarea[@ng-model='address']");
+    private final SelenideElement birthAddressTextAreaSubmitButton = $x("//button[@class='btn btn-green']");
+    private final SelenideElement livingAddressButton = $x("/html/body/div[1]/div/div/div[2]/div/div/" +
             "div[1]/div[1]/div/div[7]/div[2]/address-control/div/div/button[1]");
-    private SelenideElement livingAddressSubmitFormButton = $("#BodyWrapper > div.modal.fade." +
+    private final SelenideElement livingAddressSubmitFormButton = $("#BodyWrapper > div.modal.fade." +
             "ng-isolate-scope.show > div > div > div.modal-footer.ng-scope" +
             " > div > ok-cancel-buttons > button.btn.btn-green.ng-binding");
-    private SelenideElement newIdButton = $x("//button[@ng-click='newNumber()']");
-    private SelenideElement submitAllButton = $x("//button[@ng-click='ok()']");
-    private SelenideElement yesSubmitButton = $x("//button[@ng-click='yes()']");
+    private final SelenideElement newIdButton = $x("//button[@ng-click='newNumber()']");
+    private final SelenideElement submitAllButton = $x("//button[@ng-click='ok()']");
+    private final SelenideElement yesSubmitButton = $x("//button[@ng-click='yes()']");
 
-    private SelenideElement taxNumberSearchInput = $x("//input[@placeholder='ИНН...']");
-    private SelenideElement searchButton = $x("//*[@id='searchButtonKey']");
-    private By personFoundByTaxNumber = By.xpath("//tr[contains(@ng-attr-class, 'row')]");
-    private String taxNumber = TaxNumberGenerator.innfl();
+    private final SelenideElement taxNumberSearchInput = $x("//input[@placeholder='ИНН...']");
+    private final SelenideElement searchButton = $x("//*[@id='searchButtonKey']");
+    private final By personFoundByTaxNumber = By.xpath("//tr[contains(@ng-attr-class, 'row')]");
+    private final String taxNumber = TaxNumberGenerator.innfl();
     @Step("Открытие формы: \"Физическое лицо\".")
     public void openAddPersonForm(){
         operationFromLeftNavBar.click();
@@ -72,10 +70,7 @@ public class AddPersonPage {
         taxNumberSearchInput.shouldBe(Condition.interactable, Duration.ofSeconds(40)).clear();
         taxNumberSearchInput.sendKeys(taxNumber);
         searchButton.shouldBe(Condition.interactable, Duration.ofSeconds(40)).click();
-        if(Selenide.$(personFoundByTaxNumber).exists()){
-            return true;
-        }
-        else{return false;}
+        return Selenide.$(personFoundByTaxNumber).exists();
 
     }
     @Step("Завершение создания физического лица.")
