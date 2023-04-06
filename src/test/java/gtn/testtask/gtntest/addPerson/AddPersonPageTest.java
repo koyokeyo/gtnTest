@@ -12,9 +12,12 @@ import io.qameta.allure.Step;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -23,10 +26,7 @@ import static com.codeborne.selenide.Selenide.webdriver;
 
 @DisplayName("Тест: страница \"Добавить физическое лицо\".")
 public class AddPersonPageTest {
-    @Attachment(value = "{0}", type = "text/plain")
-    public static String attach(String attachmentName, String attachmentText) {
-        return attachmentText;
-    }
+
     AddPersonPage addPersonPage = new AddPersonPage();
     LoginPage loginPage = new LoginPage();
 
@@ -34,6 +34,9 @@ public class AddPersonPageTest {
     public static void setUpAll() {
 
         Configuration.browserSize = "1280x800";
+        Configuration.timeout = 15000;
+        Configuration.driverManagerEnabled = true;
+        webdriver().driver().clearCookies();
         SelenideLogger.addListener("allure", new AllureSelenide());
 
     }
@@ -53,21 +56,31 @@ public class AddPersonPageTest {
     @Description("Добавление физического лица через форму.")
     @DisplayName("Позитивный кейс добавления физического лица.")
     public void addPerson() {
-        WebDriverWait wait = new WebDriverWait(webdriver().object(), Duration.of(10, ChronoUnit.SECONDS));;
-        addPersonPage.openAddPersonForm(wait);
-        addPersonPage.addPerson(wait);
+        logStartTime();
+        WebDriverWait wait = new WebDriverWait(webdriver().object(), Duration.of(10, ChronoUnit.SECONDS));
+        Actions actions = new Actions(webdriver().object());
+        addPersonPage.openAddPersonForm(wait, actions);
+        addPersonPage.addPerson(wait, actions);
         Assertions.assertTrue(addPersonPage.findPersonByTaxNumber(), "Пользователь найден");
+        logEndTime();
+    }
+    private void logEndTime() {
+        String endTime = "Окончание теста: "+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM HH:mm:ss"));
+        allureStopStep(endTime);
     }
 
-    @Step("Время начала теста")
-    private void saveStartDateAttachment(Date date) {
-        attach("Время начала: " + date.toString(), "text/plain");
+    private void logStartTime() {
+        String startTime = "Начало теста: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM HH:mm:ss"));
+        allureStartStep(startTime);
     }
 
-    @Step("Время конца теста")
-    private void saveEndDateAttachment(Date date) {
-        attach("Время конца: " + date.toString(), "text/plain");
-    }
+
+    @Step("{0}")
+    public void allureStartStep(String message) {}
+
+    @Step("{0}")
+    public void allureStopStep(String message) {}
+
     @AfterAll
     public static void tearDown() {
         Selenide.webdriver().driver().close();

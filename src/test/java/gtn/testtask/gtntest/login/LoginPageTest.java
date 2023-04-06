@@ -55,7 +55,7 @@ public class LoginPageTest {
     @DisplayName("Негативный кейс логина (Пользователь ввел некорректные данные).")
     public void failureLogin() {
         
-        injectStartDate();
+        logStartTime();
 
         loginPage.enterCredentials(LoginConfiguration.INCORRECT_LOGIN, LoginConfiguration.INCORRECT_PASSWD);
         loginPage.clickSubmitButton();
@@ -63,7 +63,7 @@ public class LoginPageTest {
         Duration duration = Duration.of(2, ChronoUnit.SECONDS);
         String errorMessageText = getTextMessageFromAppearingElement(xpathExpression, duration);
 
-        injectEndDate();
+        logEndTime();
 
         Assertions.assertTrue(errorMessageText.contains("Неверный логин или пароль"),
                 "Корректное отображение ошибки.");
@@ -76,31 +76,20 @@ public class LoginPageTest {
         return message.getText();
     }
 
-    @Step("Конец теста.")
-    private void injectEndDate() {
-        Date endDate = new Date();
-        saveEndDateAttachment(endDate);
-    }
-
-    @Step("Начало теста.")
-    private void injectStartDate() {
-        Date startDate = new Date();
-        saveStartDateAttachment(startDate);
-    }
 
     @Test
     @Description("Неудачная попытка входа. Не введены данные для входа.")
     @DisplayName("Негативный кейс логина (Пользователь забыл указать данные).")
     @Order(2)
     public void submitWithoutLogin() {
-        injectStartDate();
+        logStartTime();
 
         loginPage.clickSubmitButton();
         By xpathExpression = By.xpath("//div[@id='Password']//span[@id='helpBlock']");
         Duration duration = Duration.of(2, ChronoUnit.SECONDS);
         String errorMessageText = getTextMessageFromAppearingElement(xpathExpression, duration);
 
-        injectEndDate();
+        logEndTime();
         Assertions.assertTrue(errorMessageText.contains("Введите логин"),
                 "Ошибка отображается корректно");
 
@@ -111,33 +100,26 @@ public class LoginPageTest {
     @DisplayName("Позитивный кейс логина (Пользователь ввел корректные данные).")
     @Order(3)
     public void successLogin() {
-        injectStartDate();
-        String startTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM HH:mm:ss"));
-        allureStartStep(startTime);
-
+        logStartTime();
         loginPage.enterCredentials(LoginConfiguration.CORRECT_LOGIN, LoginConfiguration.CORRECT_PASSWD);
         loginPage.clickSubmitButton();
         Duration duration = Duration.of(10, ChronoUnit.SECONDS);
         By xpathExpression = By.xpath("//*[@id=\"navbar-top\"]/ul/li[2]/label");
         String message = getTextMessageFromAppearingElement(xpathExpression, duration);
         Assertions.assertTrue(!message.isEmpty(), "Корректный вход.");
-        String endTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM HH:mm:ss"));
+        logEndTime();
+
+
+    }
+
+    private void logEndTime() {
+        String endTime = "Окончание теста: "+LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM HH:mm:ss"));
         allureStopStep(endTime);
-
-        injectEndDate();
-
-
-
     }
 
-    @Step("Время начала теста")
-    private void saveStartDateAttachment(Date date) {
-        attach("Время начала: " + date.toString(), "text/plain");
-    }
-
-    @Step("Время конца теста")
-    private void saveEndDateAttachment(Date date) {
-        attach("Время конца: " + date.toString(), "text/plain");
+    private void logStartTime() {
+        String startTime = "Начало теста: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd MMM HH:mm:ss"));
+        allureStartStep(startTime);
     }
 
 
