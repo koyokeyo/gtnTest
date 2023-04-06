@@ -15,9 +15,10 @@ import java.time.Duration;
 import static com.codeborne.selenide.Selenide.*;
 
 public class AddPersonPage {
-    private By operationFromLeftNavBar = By.xpath("//a[contains(@class, 'operation')]");
-    private By addPersonButton = By.xpath("//a[contains(@class, 'add')]");
-    private By popupAddPerson  =By.xpath("//a[@title='Физ. лицо']");
+    private SelenideElement operationFromLeftNavBar = $x("//a[@title='Операции']");
+    private SelenideElement addPersonButton = $x("//a[contains(@class, 'add')]");
+    private SelenideElement personsLi = $x("//a[contains(@href, 'ersons')]");
+    private SelenideElement popupAddPerson  = $x("//a[@title='Физ. лицо']");
 
     private SelenideElement lastNameFormInput = $x("//input[@class='form-control" +
        " mandatory-field-color-useroption169 ng-empty'][1]");
@@ -50,30 +51,27 @@ public class AddPersonPage {
     private By personFoundByTaxNumber = By.xpath("//tr[contains(@ng-attr-class, 'row')]");
     private String taxNumber = TaxNumberGenerator.innfl();
     @Step("Открытие формы: \"Физическое лицо\".")
-    public void openAddPersonForm(WebDriverWait wait, Actions actions){
+    public void openAddPersonForm(){
+        operationFromLeftNavBar.click();
+        personsLi.click();
+        addPersonButton.click();
+        popupAddPerson.click();
 
-        WebElement operationFromLeftNavBarElement = wait.until(ExpectedConditions.
-                visibilityOfElementLocated(operationFromLeftNavBar));
-        actions.moveToElement(operationFromLeftNavBarElement).click().build().perform();
-        WebElement addPersonButtonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(addPersonButton));
-        addPersonButtonElement.click();
-        WebElement popupAddPersonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(popupAddPerson));
-        popupAddPersonElement.click();
     }
 
     @Step("Добавление физического лица.")
-    public void addPerson(WebDriverWait wait, Actions actions){
+    public void addPerson(Actions actions){
         createNewUniqueNumberOfPerson();
         fillInputsWithAWackyData();
-        fillAddresses(wait);
+        fillAddresses();
         submitAddPerson(actions);
     }
     @Step("Проверка по ИНН: была ли создана запись.")
     public boolean findPersonByTaxNumber(){
 
-        taxNumberSearchInput.shouldBe(Condition.interactable, Duration.ofSeconds(20)).clear();
+        taxNumberSearchInput.shouldBe(Condition.interactable, Duration.ofSeconds(40)).clear();
         taxNumberSearchInput.sendKeys(taxNumber);
-        searchButton.click();
+        searchButton.shouldBe(Condition.interactable, Duration.ofSeconds(40)).click();
         if(Selenide.$(personFoundByTaxNumber).exists()){
             return true;
         }
@@ -93,7 +91,7 @@ public class AddPersonPage {
     }
 
     @Step("Заполнение адресов (Минимальным набором данных).")
-    private void fillAddresses(WebDriverWait wait){
+    private void fillAddresses(){
         birthAddressButton.click();
         birthAddressTextArea.sendKeys(AddPersonConfiguration.BIRTHADDRESS);
         birthAddressTextAreaSubmitButton.click();
@@ -104,7 +102,7 @@ public class AddPersonPage {
                 .shouldBe(Condition.enabled)
                 .click();
         $x("//li[contains(@data-option-array-index, '63')]").click();
-        Selenide.sleep(1000);//Без этого ошибка "Не заполнено поле Регион адреса"
+        Selenide.sleep(3000);//Без этого ошибка "Не заполнено поле Регион адреса"
         livingAddressSubmitFormButton.shouldBe(Condition.enabled).click();
     }
 

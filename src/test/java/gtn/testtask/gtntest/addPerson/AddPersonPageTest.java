@@ -57,10 +57,9 @@ public class AddPersonPageTest {
     @DisplayName("Позитивный кейс добавления физического лица.")
     public void addPerson() {
         logStartTime();
-        WebDriverWait wait = new WebDriverWait(webdriver().object(), Duration.of(10, ChronoUnit.SECONDS));
         Actions actions = new Actions(webdriver().object());
-        addPersonPage.openAddPersonForm(wait, actions);
-        addPersonPage.addPerson(wait, actions);
+        addPersonPage.openAddPersonForm();
+        addPersonPage.addPerson(actions);
         Assertions.assertTrue(addPersonPage.findPersonByTaxNumber(), "Пользователь найден");
         logEndTime();
     }
