@@ -1,5 +1,5 @@
-# gtnTest
-Intellect soft test task
+# ГосТехНадзор-QA
+Тестовое задание для Intellect-soft
 
 
 <!-- GETTING STARTED -->
